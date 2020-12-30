@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block content %}
+
+    <h1>Деталь</h1>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" name="save-detail" class="btn btn-secondary">{% if change %}Изменить{% else %}Заказать{% endif %}</button>
+
+    </form>
+    {% if change %}
+    <form method="post">
+        {% csrf_token %}
+        <input type="number" value="1" name="amount">
+        <button type="submit" name="buy-detail" class="btn btn-secondary">Докупить</button>
+
+    </form>
+    {% endif %}
+
+
+
+{% endblock %}

@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+{% block content %}
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6 col-md-6 col-sm-12">
+
+
+                <h1>Продукт</h1>
+
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    {% if product %}
+                        <p>Артикуль: {{ product.vendor_code }}</p>
+                        <p>Дата начала гарантии: {{ product.warranty_start_date|date:"d.m.Y" }}</p>
+                        <p>Заводской номер: {{ product.manufacture_number }}</p>
+                    {% endif %}
+                    <button type="submit" name="save-product" class="btn btn-secondary">Сохранить</button>
+
+                </form>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                {% if product %}
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-lg-3 col-md-3 col-sm-3">
+                                {% if employee == 'consultant' %}
+                                    {% if product.product_status == 'U' %}
+                                        <a class="btn btn-primary"
+                                           href="{% url 'main:new_document' document_type='acceptance' product_pk=product.pk_product %}">Создать
+                                            акт о принятии товара</a>
+                                    {% elif product.product_status == 'OE' %}
+                                        <form method="POST">
+                                            {% csrf_token %}
+                                            <button class="btn btn-primary" type="submit" name="to-wc">Забрал у
+                                                эксперта
+                                            </button>
+                                        </form>
+                                    {% elif product.product_status == 'WC' %}
+                                        <a class="btn btn-primary"
+                                           href="{% url 'main:new_document' document_type='fixing_document' product_pk=product.pk_product %}">Создать
+                                            заявление на ремонт товара</a>
+                                    {% elif product.product_status == 'OM' %}
+                                        <form method="POST">
+                                            {% csrf_token %}
+                                            <button class="btn btn-primary" type="submit" name="to-wr">Забрал у
+                                                мастера
+                                            </button>
+                                        </form>
+                                    {% elif product.product_status == 'WR' %}
+                                        <a class="btn btn-primary"
+                                           href="{% url 'main:new_document' document_type='return' product_pk=product.pk_product %}">Создать
+                                            заявление на возврат товара</a>
+                                    {% endif %}
+                                    <br>
+                                {% elif employee == 'expert' %}
+                                    {% if product.product_status == 'OC' %}
+                                        <form method="POST">
+                                            {% csrf_token %}
+                                            <button class="btn btn-primary" type="submit" name="to-we">Забрал у
+                                                консультанта
+                                            </button>
+                                        </form>
+                                    {% elif product.product_status == 'WE' %}
+                                        <a class="btn btn-primary"
+                                           href="{% url 'main:new_document' document_type='expert' product_pk=product.pk_product %}">Создать
+                                            экспертный отчет</a>
+                                    {% endif %}
+                                {% elif employee == 'master' %}
+                                    {% if product.product_status == 'OC2' %}
+                                        <form method="POST">
+                                            {% csrf_token %}
+                                            <button class="btn btn-primary" type="submit" name="to-wf">Забрал у
+                                                консультанта
+                                            </button>
+                                        </form>
+                                    {% elif product.product_status == 'WF' %}
+                                        <a class="btn btn-primary"
+                                           href="{% url 'main:new_document' document_type='fixing_report' product_pk=product.pk_product %}">Создать
+                                            ремонтный отчет</a>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+
+                            <div class="col-lg-8 col-md-8 col-sm-8"><br><br>
+                                <div class="list-group list-scroll">
+                                    {% for report, doc_type in reports %}
+                                        {% if doc_type == 'acceptance' %}
+                                            <a href="{% url 'main:document' doc_type report.pk_acceptance  %}" class="list-group-item list-group-item-action">Акт принятия товара<br>{{ report.document_date|date:"d.m.Y" }}</a>
+                                        {% elif doc_type == 'return' %}
+                                            <a href="{% url 'main:document' doc_type report.pk_product_return_document  %}" class="list-group-item list-group-item-action">Акт возврата товара<br>{{ report.document_date|date:"d.m.Y" }}</a>
+                                        {% elif doc_type == 'expert' %}
+                                            <a href="{% url 'main:document' doc_type report.pk_expert_report  %}" class="list-group-item list-group-item-action">Экспертный отчет о товаре<br>{{ report.report_date|date:"d.m.Y" }}</a>
+                                        {% elif doc_type == 'fixing_document' %}
+                                            <a href="{% url 'main:document' doc_type report.pk_fixing_document  %}" class="list-group-item list-group-item-action">Заявление на ремонт товара<br>{{ report.document_date|date:"d.m.Y" }}</a>
+                                        {% elif doc_type == 'fixing_report' %}
+                                            <a href="{% url 'main:document' doc_type report.pk_fixing_report  %}" class="list-group-item list-group-item-action">Ремонтный отчет о товаре<br>{{ report.report_date|date:"d.m.Y" }}</a>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+
+{% endblock %}

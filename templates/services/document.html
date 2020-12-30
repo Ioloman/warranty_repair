@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block content %}
+
+    <h1>Документ</h1>
+
+    {% if change and doc_type == 'fixing_report' %}
+        {% if parts %}<h5>Детали</h5>{% endif %}
+        {% for part in parts %}
+            <p>{{ part }}</p>
+        {% endfor %}
+        <form method="post">
+            <h5>Добавить деталь</h5>
+            {% csrf_token %}
+            {{ choose_part.as_p }}
+            <button type="submit" name="choose-part" class="btn btn-secondary">Добавить</button>
+
+        </form>
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" name="save-document" class="btn btn-secondary">Сохранить</button>
+
+    </form>
+
+    {% if change %}
+        <a href="{% url 'main:print' doc_type document.pk %}" class="btn btn-primary">Скачать</a>
+    {% endif %}
+
+
+
+{% endblock %}

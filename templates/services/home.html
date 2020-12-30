@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block content %}
+    {% if employee == 'consultant' %}
+        <h1>Список клиентов</h1><br>
+
+
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-1 col-md-1 col-sm-1">
+                            <a class="btn btn-primary" href="{% url 'main:new_client' %}">Создать</a>
+                        <br>
+                </div>
+                <div class="col-lg-8 col-md-8 col-sm-8"><br><br>
+                    <div class="list-group list-scroll">
+                        {% for client in clients %}
+                            <a href="{% url 'main:client' client.pk_client %}"
+                               class="list-group-item list-group-item-action">{{ client.last_name }} {{ client.first_name }} {{ client.middle_name }}<br>
+                                Дата рождания: {{ client.birthday|date:"d.m.Y" }}<br>Пасспортные данные: {{ client.passport_data }}</a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+    {% elif employee == 'master' %}
+        <h1>Детали в наличии</h1><br>
+
+
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-1 col-md-1 col-sm-1">
+                            <a class="btn btn-primary" href="{% url 'main:new_detail' %}">Заказать</a>
+                        <br>
+                </div>
+                <div class="col-lg-8 col-md-8 col-sm-8"><br><br>
+                    <div class="list-group list-scroll">
+                        {% for detail in details %}
+                            <a href="{% url 'main:detail' detail.pk_spare_part %}"
+                               class="list-group-item list-group-item-action">Название: {{ detail.detail_name }}<br>Артикул: {{ detail.vendor_code }}<br>
+                                В наличии: {{ detail.amount }}</a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+    {% endif %}
+{% endblock %}

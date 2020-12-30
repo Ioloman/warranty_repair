@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block content %}
+
+    <h1>Список товаров</h1><br>
+
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-1 col-md-1 col-sm-1">
+                {% if employee == 'consultant' %}
+                    <form method="POST">
+                        {% csrf_token %}
+                        <button class="btn btn-primary" type="submit" name="new-product">Создать</button>
+                    </form>
+
+                    <br>
+                {% endif %}
+            </div>
+            <div class="col-lg-8 col-md-8 col-sm-8"><br><br>
+                <div class="list-group list-scroll">
+                    {% for pr in urgent %}
+                        <a href="{% url 'main:product' pr.pk_product %}"
+                           class="list-group-item list-group-item-action active">{{ pr.product_name|truncatechars:50 }}
+                            - {{ pr.get_product_status_display }}<br>{{ pr.manufacture_number }}</a>
+                    {% endfor %}
+                    {% for pr in products %}
+                        <a href="{% url 'main:product' pr.pk_product %}"
+                           class="list-group-item list-group-item-action">{{ pr.product_name|truncatechars:50 }}
+                            - {{ pr.get_product_status_display }} <br>{{ pr.manufacture_number }}</a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
